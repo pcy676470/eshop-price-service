@@ -44,4 +44,22 @@ public class ProductPriceServiceImpl implements ProductPriceService {
 		return productPriceMapper.findById(id);
 	}
 
+	@Override
+	public ProductPrice findByProductId(Long productId) {
+		
+		Jedis jedis = jedisPool.getResource();
+		String dataJson = jedis.get("product_price_"+productId);
+		
+		if(dataJson!=null && !"".equals(dataJson)){
+			JSONObject dataJSONObject = JSONObject.parseObject(dataJson);
+			dataJSONObject.put("id", -1);
+			
+			return JSONObject.parseObject(dataJson,ProductPrice.class);
+		};
+		
+		return productPriceMapper.findByProductId(productId);
+	}
+	
+	
+
 }
